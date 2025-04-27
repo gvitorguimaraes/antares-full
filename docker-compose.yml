@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRESQL_BASE_DIR: /opt/bitnami/postgresql
+      POSTGRESQL_USERNAME: antaresuser
+      POSTGRESQL_PASSWORD: pK2SXbUS95s1
+      POSTGRESQL_DATABASE: antaresdb
+    ports:
+      - 5432:5432
+    networks:
+      - antaresapp-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  backend:
+    build: ./antares  
+    container_name: java_backend
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/antaresdb
+      SPRING_DATASOURCE_USERNAME: antaresuser
+      SPRING_DATASOURCE_PASSWORD: pK2SXbUS95s1
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    networks:
+      - antaresapp-network
+
+  frontend:
+    build: ./antares-app  
+    container_name: angular_frontend
+    restart: always
+    ports:
+      - "4200:80"  
+    depends_on:
+      - backend
+    networks:
+      - antaresapp-network
+
+networks:
+  antaresapp-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
