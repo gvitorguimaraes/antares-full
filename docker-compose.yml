@@ -18,7 +18,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   backend:
-    build: ./antares  
+    build: ./backend  
     container_name: java_backend
     restart: always
     environment:
@@ -33,7 +33,7 @@ services:
       - antaresapp-network
 
   frontend:
-    build: ./antares-app  
+    build: ./frontend  
     container_name: angular_frontend
     restart: always
     ports:
